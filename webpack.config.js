@@ -2,9 +2,9 @@ const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 
-// const PurifyCSSPlugin = require('purifycss-webpack')
-// const path = require('path')
-// const glob = require('glob-all')
+const PurifyCSSPlugin = require('purifycss-webpack')
+const path = require('path')
+const glob = require('glob-all')
 
 module.exports = {
     entry: './src/main.js',
@@ -20,6 +20,18 @@ module.exports = {
                     fallback: 'style-loader',
                     use: 'css-loader!sass-loader'
                 })
+            },
+
+            {
+                test: /\.(png|jpg|gif|svg)$/,
+                use: [
+                    {
+                        loader: 'file-loader',
+                        options: {
+                            outputPath: 'img'
+                        }
+                    }
+                ]
             }
         ]
     },
@@ -35,6 +47,16 @@ module.exports = {
             title: 'My App',
             template: 'src/index.html',
             filename: 'index.html'
+        }),
+        new PurifyCSSPlugin({
+            paths: glob.sync([
+                path.join(__dirname, 'src/*.html'),
+                path.join(__dirname, 'src/*.js')
+            ]),
+            minimize: true,
+            purifyOptions: {
+                whitelist: []
+            }
         })
     ],
     watch: true,
